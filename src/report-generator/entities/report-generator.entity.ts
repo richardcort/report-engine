@@ -1,4 +1,6 @@
 export class ReportGenerator {
+  template: string; 
+  data: any;
   date: Date;
   correlative: string;
   for: string;

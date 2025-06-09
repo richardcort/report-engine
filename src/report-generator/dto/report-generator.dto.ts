@@ -1,7 +1,10 @@
-import { PickType } from "@nestjs/mapped-types";
-import { ReportGenerator } from "../entities/report-generator.entity";
+import { PickType } from '@nestjs/mapped-types';
+import { ReportGenerator } from '../entities/report-generator.entity';
 
-export class CreateReportGeneratorDto {}
+export class CreateReportGeneratorDto extends PickType(ReportGenerator, [
+  'template',
+  'data',
+]) {}
 
 export class technicalReportDto extends PickType(ReportGenerator, [
   'date',
