@@ -1,7 +1,7 @@
 import { Controller, Post, Body, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ReportGeneratorService } from './report-generator.service';
-import { CreateReportGeneratorDto, technicalReportDto } from './dto/report-generator.dto';
+import { CreateReportGeneratorDto } from './dto/report-generator.dto';
 
 @Controller('report-generator')
 export class ReportGeneratorController {
