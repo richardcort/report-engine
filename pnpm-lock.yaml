@@ -14,15 +14,24 @@ importers:
       '@nestjs/core':
         specifier: ^11.0.1
         version: 11.1.2(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/mapped-types':
+        specifier: '*'
+        version: 2.1.0(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)
       '@nestjs/platform-express':
         specifier: ^11.0.1
         version: 11.1.2(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.2)
+      '@nestjs/serve-static':
+        specifier: ^5.0.3
+        version: 5.0.3(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.2)(express@5.1.0)
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
+      wkhtmltopdf:
+        specifier: ^0.4.0
+        version: 0.4.0
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.2.0
@@ -744,6 +753,19 @@ packages:
       '@nestjs/websockets':
         optional: true
 
+  '@nestjs/mapped-types@2.1.0':
+    resolution: {integrity: sha512-W+n+rM69XsFdwORF11UqJahn4J3xi4g/ZEOlJNL6KoW5ygWSmBB2p0S2BZ4FQeS/NDH72e6xIcu35SfJnE8bXw==}
+    peerDependencies:
+      '@nestjs/common': ^10.0.0 || ^11.0.0
+      class-transformer: ^0.4.0 || ^0.5.0
+      class-validator: ^0.13.0 || ^0.14.0
+      reflect-metadata: ^0.1.12 || ^0.2.0
+    peerDependenciesMeta:
+      class-transformer:
+        optional: true
+      class-validator:
+        optional: true
+
   '@nestjs/platform-express@11.1.2':
     resolution: {integrity: sha512-GlNwOT4htRp8RpZ+TpqGtSHwGKw/abdxxBRse40XE2SWs5ikaoujr9Yd+5sJWDNXB4QTftwb+FplXhyk1Ra+4A==}
     peerDependencies:
@@ -754,6 +776,22 @@ packages:
     resolution: {integrity: sha512-T50SCNyqCZ/fDssaOD7meBKLZ87ebRLaJqZTJPvJKjlib1VYhMOCwXYsr7bjMPmuPgiQHOwvppz77xN/m6GM7A==}
     peerDependencies:
       typescript: '>=4.8.2'
+
+  '@nestjs/serve-static@5.0.3':
+    resolution: {integrity: sha512-0jFjTlSVSLrI+mot8lfm+h2laXtKzCvgsVStv9T1ZBZTDwS26gM5czIhIESmWAod0PfrbCDFiu9C1MglObL8VA==}
+    peerDependencies:
+      '@fastify/static': ^8.0.4
+      '@nestjs/common': ^11.0.2
+      '@nestjs/core': ^11.0.2
+      express: ^5.0.1
+      fastify: ^5.2.1
+    peerDependenciesMeta:
+      '@fastify/static':
+        optional: true
+      express:
+        optional: true
+      fastify:
+        optional: true
 
   '@nestjs/testing@11.1.2':
     resolution: {integrity: sha512-BQxVKUVW6gzEbbHAvmg5RgcP3s++pRgTCmsgaDF/DtcLRUeKi8SjAdqzLm14xbkMeibxOf3fNqM2iwqUKj8ffw==}
@@ -2132,6 +2170,10 @@ packages:
   is-promise@4.0.0:
     resolution: {integrity: sha512-hvpoI6korhJMnej285dSg6nu1+e6uxs7zG3BYAm5byqDsgJNWwxzM6z6iZiAgQR4TJ30JmBTOwqZUw3WlyH3AQ==}
 
+  is-stream@1.1.0:
+    resolution: {integrity: sha512-uQPm8kcs47jx38atAcWTVxyltQYoPT68y9aWYdV6yWXSyW8mzSat0TL6CiWdZeCdF3KrAvpVtnHbTv4RN+rqdQ==}
+    engines: {node: '>=0.10.0'}
+
   is-stream@2.0.1:
     resolution: {integrity: sha512-hFoiJiTl63nn+kstHGBtewWSKnQLpyb155KHheA1l39uvtO9nWIop1p3udqPcUd/xbF1VLMO4n7OI6p7RbngDg==}
     engines: {node: '>=8'}
@@ -2931,6 +2973,9 @@ packages:
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
 
+  slang@0.3.0:
+    resolution: {integrity: sha512-kGj3TvxSDR1Enhig/aan5ucfWNDULTiWg3NrExUzO2ShXcYsm6k2oPxnav8GtslYvozxRAqL+E2O3P3QKtQYSg==}
+
   slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
@@ -3295,6 +3340,10 @@ packages:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
     hasBin: true
+
+  wkhtmltopdf@0.4.0:
+    resolution: {integrity: sha512-PXvsPehsmP1HeUDPx5qofitc+TJ0+Gb4Xn11iPJnHrLgXwyzRUzn9/b2t+soE+fwBMqUPs4Wchd0CRW+52MkNQ==}
+    engines: {node: '>=0.6'}
 
   word-wrap@1.2.5:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
@@ -4131,6 +4180,11 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 11.1.2(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.2)
 
+  '@nestjs/mapped-types@2.1.0(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)':
+    dependencies:
+      '@nestjs/common': 11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      reflect-metadata: 0.2.2
+
   '@nestjs/platform-express@11.1.2(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.2)':
     dependencies:
       '@nestjs/common': 11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -4153,6 +4207,14 @@ snapshots:
       typescript: 5.8.3
     transitivePeerDependencies:
       - chokidar
+
+  '@nestjs/serve-static@5.0.3(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.2)(express@5.1.0)':
+    dependencies:
+      '@nestjs/common': 11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.1.2(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      path-to-regexp: 8.2.0
+    optionalDependencies:
+      express: 5.1.0
 
   '@nestjs/testing@11.1.2(@nestjs/common@11.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.2)(@nestjs/platform-express@11.1.2)':
     dependencies:
@@ -5647,6 +5709,8 @@ snapshots:
 
   is-promise@4.0.0: {}
 
+  is-stream@1.1.0: {}
+
   is-stream@2.0.1: {}
 
   is-stream@4.0.1: {}
@@ -6575,6 +6639,8 @@ snapshots:
 
   sisteransi@1.0.5: {}
 
+  slang@0.3.0: {}
+
   slash@3.0.0: {}
 
   sort-keys-length@1.0.1:
@@ -6959,6 +7025,11 @@ snapshots:
   which@2.0.2:
     dependencies:
       isexe: 2.0.0
+
+  wkhtmltopdf@0.4.0:
+    dependencies:
+      is-stream: 1.1.0
+      slang: 0.3.0
 
   word-wrap@1.2.5: {}
 

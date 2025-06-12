@@ -1,19 +1,110 @@
 import { Injectable } from '@nestjs/common';
-import { CreateReportGeneratorDto, technicalReportDto } from './dto/report-generator.dto';
-import * as wkhtmltopdf from 'wkhtmltopdf';
+import { CreateReportGeneratorDto } from './dto/report-generator.dto';
+import * as path from 'path';
 import * as fs from 'fs';
+import * as wkhtmltopdf from 'wkhtmltopdf';
 
 @Injectable()
 export class ReportGeneratorService {
-  create(data: technicalReportDto) {
+  async create(reportData: CreateReportGeneratorDto) {
     try {
-      const htmlContent = fs.readFileSync('./src/templates/technical-report.html', 'utf8');
-      console.log(htmlContent);
+      let { template, data } = reportData;
+
+      const templatePath: string = path.join(
+        __dirname,
+        '/..',
+        '/templates/',
+        template + '.html',
+      );
+
+      if (!fs.existsSync(templatePath)) {
+        return {
+          statusCode: 404,
+          message: 'Template not found',
+          data: null,
+        };
+      }
+
+      let htmlContent: string = fs.readFileSync(templatePath, 'utf8');
+
+      Object.keys(data).forEach((key) => {
+        if (Array.isArray(data[key])) {
+          let table = this.arrayToHtmlTable(data[key]);
+          htmlContent = htmlContent.replace(`<data-table-${key} />`, table);
+        } else if (typeof data[key] === 'object') {
+          console.log('Object detected');
+          Object.keys(data[key]).forEach((subKey) => {
+            htmlContent = this.replaceHtmlTags(
+              htmlContent,
+              subKey,
+              data[key][subKey],
+            );
+          });
+        } else {
+          htmlContent = this.replaceHtmlTags(htmlContent, key, data[key]);
+        }
+      });
+
+      const pdfStream = wkhtmltopdf(htmlContent);
+      const pdfBuffer = await this.streamToBuffer(pdfStream);
+
+      const outputPath = path.join(__dirname, 'output.pdf');
+      fs.writeFileSync(outputPath, pdfBuffer);
+      console.log(`PDF guardado en: ${outputPath}`);
       
-      return 'This action adds a new reportGenerator';
+      return {
+        statusCode: 200,
+        message: 'PDF generated successfully',
+        data: pdfBuffer,
+      };
     } catch (error) {
-      console.error('Error creating report generator:', error);
-      throw new Error('Failed to create report generator');
+        console.error('Error creating report generator:', error);
+        throw new Error('Failed to create report generator');
     }
+  }
+
+  private replaceHtmlTags(htmlContent: string, key: string, value: any) {
+    return htmlContent = htmlContent.replace(`<data-${key} />`, `${value}`);;
+  }
+
+  private arrayToHtmlTable(array: any[]) {
+    if (!array.length) return '';
+
+    let headers = `
+      <thead>
+        <tr>
+          ${Object.keys(array[0])
+            .map((key) => `<th>${key}</th>`)
+            .join('')}
+        </tr>
+      </thead>`;
+
+    let rows = `
+      <tbody>
+        ${array
+          .map(
+            (item) =>
+              `<tr>${Object.values(item)
+                .map((value) => `<td>${value}</td>`)
+                .join('')}</tr>`,
+          )
+          .join('')}
+      </tbody>`;
+
+    const table = `
+      <table>
+        ${headers}
+        ${rows}
+      </table>`;
+
+    return table;
+  }
+
+  private async streamToBuffer(readbleStream: ReadableStream) {
+    const chunks = [];
+
+    for await (const chunk of readbleStream) chunks.push(chunk);
+
+    return Buffer.concat(chunks);
   }
 }
