@@ -26,33 +26,45 @@ export class ReportGeneratorService {
       }
 
       let htmlContent: string = fs.readFileSync(templatePath, 'utf8');
-      htmlContent = this.replaceHtmlTags(htmlContent, data);
+
+      Object.keys(data).forEach((key) => {
+        if (Array.isArray(data[key])) {
+          let table = this.arrayToHtmlTable(data[key]);
+          htmlContent = htmlContent.replace(`<data-table-${key} />`, table);
+        } else if (typeof data[key] === 'object') {
+          console.log('Object detected');
+          Object.keys(data[key]).forEach((subKey) => {
+            htmlContent = this.replaceHtmlTags(
+              htmlContent,
+              subKey,
+              data[key][subKey],
+            );
+          });
+        } else {
+          htmlContent = this.replaceHtmlTags(htmlContent, key, data[key]);
+        }
+      });
 
       const pdfStream = wkhtmltopdf(htmlContent);
       const pdfBuffer = await this.streamToBuffer(pdfStream);
 
+      const outputPath = path.join(__dirname, 'output.pdf');
+      fs.writeFileSync(outputPath, pdfBuffer);
+      console.log(`PDF guardado en: ${outputPath}`);
+      
       return {
         statusCode: 200,
         message: 'PDF generated successfully',
         data: pdfBuffer,
       };
     } catch (error) {
-      console.error('Error creating report generator:', error);
-      throw new Error('Failed to create report generator');
+        console.error('Error creating report generator:', error);
+        throw new Error('Failed to create report generator');
     }
   }
 
-  private replaceHtmlTags(htmlContent: string, data: any) {
-    Object.keys(data).forEach((key) => {
-      if (Array.isArray(data[key])) {
-        let table = this.arrayToHtmlTable(data[key]);
-        htmlContent = htmlContent.replace(`<data-table-${key} />`, table);
-      } else {
-        htmlContent = htmlContent.replace(`<data-${key} />`, `${data[key]}`);
-      }
-    });
-
-    return htmlContent;
+  private replaceHtmlTags(htmlContent: string, key: string, value: any) {
+    return htmlContent = htmlContent.replace(`<data-${key} />`, `${value}`);;
   }
 
   private arrayToHtmlTable(array: any[]) {
