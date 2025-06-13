@@ -28,21 +28,7 @@ export class ReportGeneratorService {
       let htmlContent: string = fs.readFileSync(templatePath, 'utf8');
 
       Object.keys(data).forEach((key) => {
-        if (Array.isArray(data[key])) {
-          let table = this.arrayToHtmlTable(data[key]);
-          htmlContent = htmlContent.replace(`<data-table-${key} />`, table);
-        } else if (typeof data[key] === 'object') {
-          console.log('Object detected');
-          Object.keys(data[key]).forEach((subKey) => {
-            htmlContent = this.replaceHtmlTags(
-              htmlContent,
-              subKey,
-              data[key][subKey],
-            );
-          });
-        } else {
-          htmlContent = this.replaceHtmlTags(htmlContent, key, data[key]);
-        }
+        htmlContent = this.processDataKey(htmlContent, key, data[key]);
       });
 
       const pdfStream = wkhtmltopdf(htmlContent);
@@ -51,7 +37,7 @@ export class ReportGeneratorService {
       const outputPath = path.join(__dirname, 'output.pdf');
       fs.writeFileSync(outputPath, pdfBuffer);
       console.log(`PDF guardado en: ${outputPath}`);
-      
+
       return {
         statusCode: 200,
         message: 'PDF generated successfully',
@@ -61,6 +47,21 @@ export class ReportGeneratorService {
         console.error('Error creating report generator:', error);
         throw new Error('Failed to create report generator');
     }
+  }
+
+  private processDataKey(htmlContent: string, key: string, value: any) {
+    if (typeof value === 'object' && value !== null) {
+      console.log('Object detected');
+      return this.processNestedObject(htmlContent, value);
+    }
+    return this.replaceHtmlTags(htmlContent, key, value);
+  }
+
+  private processNestedObject(htmlContent: string, nestedObject: object) {
+    Object.entries(nestedObject).forEach(([subKey, subValue]) => {
+      htmlContent  = this.replaceHtmlTags(htmlContent, subKey, subValue);
+    });
+    return htmlContent;
   }
 
   private replaceHtmlTags(htmlContent: string, key: string, value: any) {
