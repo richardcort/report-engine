@@ -34,10 +34,6 @@ export class ReportGeneratorService {
       const pdfStream = wkhtmltopdf(htmlContent);
       const pdfBuffer = await this.streamToBuffer(pdfStream);
 
-      const outputPath = path.join(__dirname, 'output.pdf');
-      fs.writeFileSync(outputPath, pdfBuffer);
-      console.log(`PDF guardado en: ${outputPath}`);
-
       return {
         statusCode: 200,
         message: 'PDF generated successfully',
@@ -50,8 +46,10 @@ export class ReportGeneratorService {
   }
 
   private processDataKey(htmlContent: string, key: string, value: any) {
+    if (Array.isArray(value) && htmlContent.includes(`<data-${key} />`)) {
+      return this.arrayToHtmlTable(value);
+    }
     if (typeof value === 'object' && value !== null) {
-      console.log('Object detected');
       return this.processNestedObject(htmlContent, value);
     }
     return this.replaceHtmlTags(htmlContent, key, value);
