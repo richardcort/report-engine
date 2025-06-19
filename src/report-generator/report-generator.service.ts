@@ -50,14 +50,14 @@ export class ReportGeneratorService {
       return this.replaceHtmlTags(htmlContent, key, this.arrayToHtmlTable(value));
     }
     if (typeof value === 'object' && value !== null) {
-      return this.processNestedObject(htmlContent, value);
+      return this.processNestedObject(htmlContent, key, value);
     }
     return this.replaceHtmlTags(htmlContent, key, value);
   }
 
-  private processNestedObject(htmlContent: string, nestedObject: object) {
+  private processNestedObject(htmlContent: string, key:string ,nestedObject: object) {
     Object.entries(nestedObject).forEach(([subKey, subValue]) => {
-      htmlContent  = this.replaceHtmlTags(htmlContent, subKey, subValue);
+      htmlContent  = this.replaceHtmlTags(htmlContent, `${key}-${subKey}`, subValue);
     });
     return htmlContent;
   }
