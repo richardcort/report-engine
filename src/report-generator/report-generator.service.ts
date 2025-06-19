@@ -47,7 +47,7 @@ export class ReportGeneratorService {
 
   private processDataKey(htmlContent: string, key: string, value: any) {
     if (Array.isArray(value) && htmlContent.includes(`<data-${key} />`)) {
-      return this.arrayToHtmlTable(value);
+      return this.replaceHtmlTags(htmlContent, key, this.arrayToHtmlTable(value));
     }
     if (typeof value === 'object' && value !== null) {
       return this.processNestedObject(htmlContent, value);
@@ -63,7 +63,7 @@ export class ReportGeneratorService {
   }
 
   private replaceHtmlTags(htmlContent: string, key: string, value: any) {
-    return htmlContent = htmlContent.replace(`<data-${key} />`, `${value}`);;
+    return htmlContent = htmlContent.replace(`<data-${key} />`, `${value}`);
   }
 
   private arrayToHtmlTable(array: any[]) {
