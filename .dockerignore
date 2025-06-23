@@ -1,0 +1,8 @@
+node_modules
+.git
+.vscode
+npm-debug.log
+dist
+test
+pnpm-lock.yaml
+yarn.lock
