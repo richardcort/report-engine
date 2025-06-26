@@ -40,14 +40,18 @@ export class ReportGeneratorService {
         data: pdfBuffer,
       };
     } catch (error) {
-        console.error('Error creating report generator:', error);
-        throw new Error('Failed to create report generator');
+      console.error('Error creating report generator:', error);
+      throw new Error('Failed to create report generator');
     }
   }
 
   private processDataKey(htmlContent: string, key: string, value: any) {
     if (Array.isArray(value) && htmlContent.includes(`<data-${key} />`)) {
-      return this.replaceHtmlTags(htmlContent, key, this.arrayToHtmlTable(value));
+      return this.replaceHtmlTags(
+        htmlContent,
+        key,
+        this.arrayToHtmlRows(value),
+      );
     }
     if (typeof value === 'object' && value !== null) {
       return this.processNestedObject(htmlContent, key, value);
@@ -55,48 +59,38 @@ export class ReportGeneratorService {
     return this.replaceHtmlTags(htmlContent, key, value);
   }
 
-  private processNestedObject(htmlContent: string, key:string ,nestedObject: object) {
+  private processNestedObject(
+    htmlContent: string,
+    key: string,
+    nestedObject: object,
+  ) {
     Object.entries(nestedObject).forEach(([subKey, subValue]) => {
-      htmlContent  = this.replaceHtmlTags(htmlContent, `${key}-${subKey}`, subValue);
+      htmlContent = this.replaceHtmlTags(
+        htmlContent,
+        `${key}-${subKey}`,
+        subValue,
+      );
     });
     return htmlContent;
   }
 
   private replaceHtmlTags(htmlContent: string, key: string, value: any) {
-    return htmlContent = htmlContent.replace(`<data-${key} />`, `${value}`);
+    return (htmlContent = htmlContent.replace(`<data-${key} />`, `${value}`));
   }
 
-  private arrayToHtmlTable(array: any[]) {
+  private arrayToHtmlRows(array: any[]) {
     if (!array.length) return '';
 
-    let headers = `
-      <thead>
-        <tr>
-          ${Object.keys(array[0])
-            .map((key) => `<th>${key}</th>`)
-            .join('')}
-        </tr>
-      </thead>`;
+    let rows = array
+      .map(
+        (item) =>
+          `<tr>
+                ${Object.values(item).map((value) => `<td>${value}</td>`).join('')}
+          </tr>`,
+      )
+      .join('');
 
-    let rows = `
-      <tbody>
-        ${array
-          .map(
-            (item) =>
-              `<tr>${Object.values(item)
-                .map((value) => `<td>${value}</td>`)
-                .join('')}</tr>`,
-          )
-          .join('')}
-      </tbody>`;
-
-    const table = `
-      <table>
-        ${headers}
-        ${rows}
-      </table>`;
-
-    return table;
+    return rows;
   }
 
   private async streamToBuffer(readbleStream: ReadableStream) {
