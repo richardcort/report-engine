@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateReportGeneratorDto } from './dto/report-generator.dto';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as wkhtmltopdf from 'wkhtmltopdf';
+import puppeteer from 'puppeteer';
 
 @Injectable()
 export class ReportGeneratorService {
@@ -14,7 +14,7 @@ export class ReportGeneratorService {
         __dirname,
         '/..',
         '/templates/',
-        template + '.html',
+        `${template}.html`,
       );
 
       if (!fs.existsSync(templatePath)) {
@@ -31,8 +31,7 @@ export class ReportGeneratorService {
         htmlContent = this.processDataKey(htmlContent, key, data[key]);
       });
 
-      const pdfStream = wkhtmltopdf(htmlContent);
-      const pdfBuffer = await this.streamToBuffer(pdfStream);
+      const pdfBuffer = await this.generatePdf(htmlContent);
 
       return {
         statusCode: 200,
@@ -43,6 +42,26 @@ export class ReportGeneratorService {
       console.error('Error creating report generator:', error);
       throw new Error('Failed to create report generator');
     }
+  }
+
+  private async generatePdf(htmlContent: string) {
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
+
+    const page = await browser.newPage();
+
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      landscape: true,
+    });
+
+    await browser.close();
+
+    return Buffer.from(pdfBuffer);
   }
 
   private processDataKey(htmlContent: string, key: string, value: any) {
@@ -85,19 +104,13 @@ export class ReportGeneratorService {
       .map(
         (item) =>
           `<tr>
-                ${Object.values(item).map((value) => `<td>${value}</td>`).join('')}
+                ${Object.values(item)
+                  .map((value) => `<td>${value}</td>`)
+                  .join('')}
           </tr>`,
       )
       .join('');
 
     return rows;
-  }
-
-  private async streamToBuffer(readbleStream: ReadableStream) {
-    const chunks = [];
-
-    for await (const chunk of readbleStream) chunks.push(chunk);
-
-    return Buffer.concat(chunks);
   }
 }
