@@ -11,19 +11,14 @@ export class ReportGeneratorService {
   private templatePath: string;
   private template: any;
 
-  async create(reportData: CreateReportGeneratorDto): Promise<{statusCode: number; message: string; data: Buffer;}> {
+  async create(
+    reportData: CreateReportGeneratorDto,
+  ): Promise<{ statusCode: number; message: string; data: Buffer }> {
     try {
       var { template, data } = reportData;
-
       this.data = data;
       this.template = template;
-      console.log(this.template);
-      this.templatePath = path.join(
-        __dirname,
-        '/..',
-        '/templates/',
-        `${this.template.name}.html`,
-      );
+      this.templatePath = path.join(__dirname, '/..', '/templates/', `${template.name}.html`);
 
       if (!fs.existsSync(this.templatePath)) {
         return {
@@ -34,10 +29,22 @@ export class ReportGeneratorService {
       }
 
       this.htmlContent = fs.readFileSync(this.templatePath, 'utf8');
-      
-      await this.bm1();
 
-      const pdfBuffer = await this.generatePdf();
+      switch (this.template.name) {
+        case 'bm2':
+          await this.bm2();
+          break;
+        case 'internal-transfer':
+          await this.internalTransfer();
+          break;
+        case 'general-inventory-of-assets':
+          await this.bm1();
+          break;
+        default:
+          break;
+      }
+
+      let pdfBuffer = await this.generatePdf();
 
       return {
         statusCode: 200,
@@ -57,12 +64,12 @@ export class ReportGeneratorService {
     });
 
     const page = await browser.newPage();
-    
+
     await page.setContent(this.htmlContent, { waitUntil: 'networkidle0' });
-    
+
     delete this.template.name;
     const pdfBuffer = await page.pdf(this.template);
-    
+
     await browser.close();
 
     return Buffer.from(pdfBuffer);
@@ -95,131 +102,371 @@ export class ReportGeneratorService {
   private bm1(): void {
     const tempTemplate = '<br>' + fs.readFileSync(this.templatePath, 'utf8');
 
-      this.htmlContent = this.htmlContent.replace(
-        `<data-inventory />`,
-        `<data-inventory-0 />`,
+    this.htmlContent = this.htmlContent.replace(
+      `<data-inventory />`,
+      `<data-inventory-0 />`,
+    );
+
+    let lettrePerLine = 115;
+    let maxLine = 28;
+    let lineCounter = 0;
+    let htmlTable = ``;
+    let total = 0;
+    let tables: string[] = [];
+
+    for (let i = 0; i < this.data['inventory'].length; i++) {
+      let count = Math.ceil(
+        this.data['inventory'][i].description.length / lettrePerLine,
       );
-      //console.log( this.htmlContent);
 
-      let letraPorLinea = 115;
-      let maxLinea = 28;
-      let lineaCount = 0;
-      let htmltable = ``;
-      let total = 0;
-      let tables: string[] = [];
-      let page = 1;
+      if (count > maxLine) {
+        count = maxLine;
+      }
 
-      console.log('This length works' + this.data['inventory'].length);
-      for (let i = 0; i < this.data['inventory'].length; i++) {
-        // Calcular líneas que ocupa el item actual
-        let cuenta = Math.ceil(
-          this.data['inventory'][i].description.length / letraPorLinea,
-        );
-
-        console.log( 'this other length works' + this.data['inventory'][i].description.length);
-
-        // Limitar a maxLinea para evitar página demasiado grande
-        if (cuenta > maxLinea) {
-          cuenta = maxLinea;
-        }
-
-        // Verificar si el item cabe en la página actual
-        if (cuenta + lineaCount <= maxLinea) {
-          // Si es la primera fila de la página, agregar encabezado "VIENEN..."
-          if (lineaCount === 0 && i !== 0) {
-            htmltable += `
+      if (count + lineCounter <= maxLine) {
+        if (lineCounter === 0 && i !== 0) {
+          htmlTable += `
         <tr>
           <th></th><th></th><th></th><th></th><th></th>
           <th width="65%" class="text-right">VIENEN...</th>
           <th width="5%">${this.formatNumberSpanish(total)}</th>
         </tr>
       `;
-          }
+        }
 
-          // Agregar fila con datos del item
-          htmltable += `
+        htmlTable += `
       <tr>
         <td>${this.data['inventory'][i]['group_code']}</td>
         <td>${this.data['inventory'][i]['sub_group_code']}</td>
         <td>${this.data['inventory'][i]['section_code']}</td>
-        <td>${this.data['inventory'][i]['quantity']}</td>
+        <td>1</td>
         <td>${this.data['inventory'][i]['identify_number']}</td>
         <td style="text-align: justify; padding-right: 5px;">${this.data['inventory'][i]['description']}</td>
         <td>${this.formatNumberSpanish(parseFloat(this.data['inventory'][i]['amount']))}</td>
       </tr>
     `;
 
-          // Actualizar total y línea usadas
-          total += this.data['inventory'][i]['amount'];
-          lineaCount += cuenta + 1;
+        total += this.data['inventory'][i]['amount'];
+        lineCounter += count + 1;
 
-          // Si se llena la página, agregar fila "VAN..." y guardar página
-          if (lineaCount > maxLinea) {
-            let concatTotal =
-              i === this.data['inventory'].length - 1 ? 'TOTAL...' : 'VAN...';
-            htmltable += `
+        if (lineCounter > maxLine) {
+          let concatTotal =
+            i === this.data['inventory'].length - 1 ? 'TOTAL...' : 'VAN...';
+          htmlTable += `
             
         <tr>
           <th colspan="6" class="text-right">${concatTotal}</th>
           <th width="5%">${this.formatNumberSpanish(total)}</th>
         </tr>
       `;
-            tables.push(htmltable);
-            htmltable = '';
-            lineaCount = 0;
-          }
-        } else {
-          //console.log(i, this.data['inventory'].length);
-          let concatTotal =
-            i === this.data['inventory'].length ? 'TOTAL...' : 'VAN...';
-          // No cabe en la página actual, cerrar página y repetir item en la siguiente
-          htmltable += `
+          tables.push(htmlTable);
+          htmlTable = '';
+          lineCounter = 0;
+        }
+      } else {
+        let concatTotal =
+          i === this.data['inventory'].length ? 'TOTAL...' : 'VAN...';
+        htmlTable += `
       <tr>
         <th colspan="6" class="text-right">${concatTotal}</th>
         <th width="5%">${this.formatNumberSpanish(total)}</th>
       </tr>
     `;
-          tables.push(htmltable);
-          htmltable = '';
-          lineaCount = 0;
-          i -= 1; // Repetir este item en la siguiente página
-        }
+        tables.push(htmlTable);
+        htmlTable = '';
+        lineCounter = 0;
+        i -= 1;
       }
+    }
 
-      // Agregar última página si quedó contenido pendiente
-      if (htmltable !== '') {
-        //console.log('this the if ');
-        htmltable += `
+    if (htmlTable !== '') {
+      htmlTable += `
           <tr>
             <th colspan="6" class="text-right">TOTAL...</th>
             <th width="5%">${this.formatNumberSpanish(total)}</th>
           </tr>
         `;
-        tables.push(htmltable);
+      tables.push(htmlTable);
+    }
+
+    for (let i = 1; i < tables.length; i++) {
+      this.htmlContent += tempTemplate.replace(
+        `<data-inventory />`,
+        `<data-inventory-${i} />`,
+      );
+    }
+
+    for (let i = 0; i < tables.length; i++) {
+      this.htmlContent = this.htmlContent.replace(
+        `<pag />`,
+        `Pag. ${i + 1}/${tables.length}`,
+      );
+    }
+
+    tables.forEach((table, index) => {
+      this.replaceHtmlTags(`inventory-${index}`, table);
+    });
+
+    Object.keys(this.data).forEach((key) => {
+      this.processDataKey(key, this.data[key]);
+    });
+  }
+
+  private internalTransfer(): void {
+    let tempTemplate = fs.readFileSync(this.templatePath, 'utf8');
+
+    this.htmlContent = this.htmlContent.replace(
+      `<data-inventory />`,
+      `<data-inventory-0 />`,
+    );
+
+    let letterPerLine = 115;
+    let maxLine = 32;
+    let lineCounter = 0;
+
+    let htmlTable = ``;
+    let total = 0;
+
+    let tables: string[] = [];
+
+    for (let i = 0; i < this.data['inventory'].length; i++) {
+      let account = Math.ceil(
+        this.data['inventory'][i].description.length / letterPerLine,
+      );
+
+      if (account > maxLine) {
+        account = maxLine;
       }
 
-      for (let i = 1; i < tables.length; i++) {
-        this.htmlContent += tempTemplate.replace(
-          `<data-inventory />`,
-          `<data-inventory-${i} />`,
-        );
+      if (account + lineCounter <= maxLine) {
+        if (lineCounter === 0 && i !== 0) {
+          htmlTable += `
+            <tr>
+              <th colspan="6">
+                <p>VIENEN...</p>
+              </th>
+              <th>
+                ${this.formatNumberSpanish(total)}
+              </th>
+            </tr>`;
+        }
+
+        htmlTable += `
+        <tr>
+          <td>${this.data['inventory'][i]['group_code']}</td>
+          <td>${this.data['inventory'][i]['sub_group_code']}</td>
+          <td>${this.data['inventory'][i]['section_code']}</td>
+          <td>1</td>
+          <td>${this.data['inventory'][i]['identify_number']}</td>
+          <td>${this.data['inventory'][i]['description'].toUpperCase()}</td>
+          <td>${this.formatNumberSpanish(parseFloat(this.data['inventory'][i]['amount']))}</td>
+        </tr>
+      `;
+
+        total += this.data['inventory'][i]['amount'];
+        lineCounter += account + 1;
+
+        if (lineCounter > maxLine) {
+          let concatTotal =
+            i === this.data['inventory'].length - 1 ? 'TOTAL...' : 'VAN...';
+          htmlTable += `
+            <tr>
+              <th colspan="6">
+                ${concatTotal}
+              </th>
+              <th>
+                ${this.formatNumberSpanish(total)}
+              </th>
+            </tr>
+          `;
+
+          tables.push(htmlTable);
+          htmlTable = '';
+          lineCounter = 0;
+        }
+      } else {
+        let concatTotal =
+          i === this.data['inventory'].length ? 'TOTAL...' : 'VAN...';
+        htmlTable += `
+            <tr>
+              <th colspan="6">
+                ${concatTotal}
+              </th>
+              <th>
+                ${this.formatNumberSpanish(total)}
+              </th>
+            </tr>
+          `;
+
+        tables.push(htmlTable);
+        htmlTable = '';
+        lineCounter = 0;
+        i -= 1;
+      }
+    }
+
+    if (htmlTable !== '') {
+      htmlTable += `
+        <tr>
+            <th colspan="6">
+              TOTAL...
+            </th>
+            <th>
+              ${this.formatNumberSpanish(total)}
+            </th>
+          </tr>
+      `;
+      tables.push(htmlTable);
+    }
+
+    for (let i = 1; i < tables.length; i++) {
+      this.htmlContent += tempTemplate.replace(
+        `<data-inventory />`,
+        `<data-inventory-${i} />`,
+      );
+    }
+
+    for (let i = 0; i < tables.length; i++) {
+      this.htmlContent = this.htmlContent.replace(
+        `<pag />`,
+        `Pag. ${i + 1}/${tables.length}`,
+      );
+    }
+
+    tables.forEach((table, index) => {
+      this.replaceHtmlTags(`inventory-${index}`, table);
+    });
+
+    Object.keys(this.data).forEach((key) => {
+      this.processDataKey(key, this.data[key]);
+    });
+  }
+
+  private bm2() {
+    const motion_concept = this.data['motionConcept'];
+    const tempTemplate = fs.readFileSync(this.templatePath, 'utf8');
+
+    this.htmlContent = this.htmlContent.replace(
+      `<data-inventory />`,
+      `<data-inventory-0 />`,
+    );
+
+    let letterPerLine = 75;
+    let maxLine = 34;
+    let lineCounter = 0;
+    let total = 0;
+    let tables: string[] = [];
+    let isIncorporation =
+      this.data['motionConcept'] >= 1 && this.data['motionConcept'] < 51;
+
+    let htmlTable = ``;
+    for (let i = 0; i < this.data['inventory'].length; i++) {
+      let cellAmount = isIncorporation
+        ? `<td>${this.formatNumberSpanish(parseFloat(this.data['inventory'][i]['amount']))}</td><td></td>`
+        : `<td></td><td>${this.formatNumberSpanish(parseFloat(this.data['inventory'][i]['amount']))}</td>`;
+
+      let count = Math.ceil(
+        this.data['inventory'][i].description.length / letterPerLine,
+      );
+
+      if (count > maxLine) {
+        count = maxLine;
       }
 
-      for (let i = 0; i < tables.length; i++) {
-        this.htmlContent = this.htmlContent.replace(
-          `<pag />`,
-          `Pag. ${i + 1}/${tables.length}`,
-        );
+      if (count + lineCounter <= maxLine) {
+        if (lineCounter === 0 && i !== 0) {
+          htmlTable += `
+            <tr>
+              <th colspan="8">VIENEN...</th>
+              ${isIncorporation ? '' : `<th></th>`}
+              <th colspan="1">${this.formatNumberSpanish(total)}</th>
+              ${isIncorporation ? `<th></th>` : ''}
+              </tr>
+              `;
+        }
+
+        htmlTable += `
+      <tr>
+        <td>${this.data['inventory'][i]['group_code']}</td>
+        <td>${this.data['inventory'][i]['sub_group_code']}</td>
+        <td>${this.data['inventory'][i]['section_code']}</td>
+        <td>${motion_concept}</td>
+        <td>1</td>
+        <td>${this.data['inventory'][i]['identify_number']}</td>
+        <td colspan="2">${this.data['inventory'][i]['description'].toUpperCase()}</td>
+        ${cellAmount}
+      </tr>
+    `;
+
+        total += this.data['inventory'][i]['amount'];
+        lineCounter += count + 1;
+
+        if (lineCounter > maxLine) {
+          let concatTotal =
+            i === this.data['inventory'].length - 1 ? 'TOTAL...' : 'VAN...';
+          htmlTable += `
+            <tr>
+            <th colspan="8">${concatTotal}</th>
+            ${isIncorporation ? '' : `<th></th>`}
+              <th colspan="1">${this.formatNumberSpanish(total)}</th>
+              ${isIncorporation ? '<th></th>' : ''}
+            </tr>
+            `;
+          tables.push(htmlTable);
+          htmlTable = '';
+          lineCounter = 0;
+        }
+      } else {
+        let concatTotal =
+          i === this.data['inventory'].length ? 'TOTAL...' : 'VAN...';
+        htmlTable += `
+            <tr>
+            <th colspan="8" >${concatTotal}</th>
+            ${isIncorporation ? '' : `<th></th>`}
+              <th colspan="1">${this.formatNumberSpanish(total)}</th>
+              ${isIncorporation ? '<th></th>' : ''}
+            </tr>
+            `;
+
+        tables.push(htmlTable);
+        htmlTable = '';
+        lineCounter = 0;
+        i -= 1;
       }
+    }
 
-      tables.forEach((table, index) => {
-        this.replaceHtmlTags(`inventory-${index}`, table);
-      });
+    if (htmlTable !== '') {
+      htmlTable += `
+        <tr>
+            <th colspan="8">TOTAL...</th>
+            ${isIncorporation ? '' : `<th></th>`}
+              <th colspan="1">${this.formatNumberSpanish(total)}</th>
+              ${isIncorporation ? '<th></th>' : ''}
+            </tr>
+            `;
+      tables.push(htmlTable);
+    }
 
-      Object.keys(this.data).forEach((key) => {
-        this.processDataKey(key, this.data[key]);
-      });
+    for (let i = 1; i < tables.length; i++) {
+      this.htmlContent += tempTemplate.replace(
+        `<data-inventory />`,
+        `<data-inventory-${i} />`,
+      );
+    }
 
+    for (let i = 0; i < tables.length; i++) {
+      this.htmlContent = this.htmlContent.replace(
+        `<pag />`,
+        `Pag. ${i + 1}/${tables.length}`,
+      );
+    }
+
+    tables.forEach((table, index) => {
+      this.replaceHtmlTags(`inventory-${index}`, table);
+    });
+
+    Object.keys(this.data).forEach((key) => {
+      this.processDataKey(key, this.data[key]);
+    });
   }
 }
-
