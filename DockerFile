@@ -8,5 +8,6 @@ COPY . .
 
 RUN pnpm fetch
 RUN pnpm install
+RUN npx puppeteer browsers install chrome
 
 CMD pnpm build; pnpm start:dev;
