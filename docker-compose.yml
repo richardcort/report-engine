@@ -4,7 +4,7 @@ services:
     container_name: report-engine
     restart: unless-stopped
     ports:
-      - 4000:3000
+      - 7553:3000
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,11 +16,11 @@ services:
         reservations:
           cpus: "3"
           memory: 700M
-    networks:
-      alfa_network:
-        ipv4_address: 172.21.20.8
-        hostname: report-engine
+#     networks:
+#       alfa_network:
+#         ipv4_address: 172.21.20.8
+#         hostname: report-engine
 
-networks:
-  alfa_network:
-    external: true
+# networks:
+#   alfa_network:
+#     external: true
