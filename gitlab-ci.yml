@@ -1,0 +1,43 @@
+stages:
+  - build
+  - deploy
+
+before_script:
+  - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
+  - eval $(ssh-agent -s)
+  - mkdir -p ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - ssh-add ~/.ssh/id_rsa
+  - ssh-keyscan $REMOTE_SERVER >> ~/.ssh/known_hosts
+  - chmod 700 ~/.ssh
+  - chmod 600 ~/.ssh/known_hosts
+
+build-job:
+  stage: build
+  script:
+    - echo "Starting building..."
+    - ssh -v $SSH_USER@$REMOTE_SERVER
+    - |
+      if [ -d $FOLDER_ROUTE ]; then
+        cd $FOLDER_ROUTE
+        git pull
+      else 
+        mkdir -p $FOLDER_ROUTE
+        cd $FOLDER_ROUTE 
+        git clone --branch dev $CI_REPOSITORY_URL . 
+      fi
+    - echo "Building complete."
+
+deploy-job:
+  stage: deploy
+  script:
+    - echo "Starting deployment..."
+    - ssh -v $SSH_USER@$REMOTE_SERVER
+    - |
+      cd $FOLDER_ROUTE
+      podman-compose build
+      podman-compose down
+      podman-compose up -d
+    - echo "Deployment complete."
+
