@@ -1,0 +1,12 @@
+FROM node:22 as base
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+COPY . .
+
+RUN pnpm fetch
+RUN pnpm install
+
+CMD pnpm build; pnpm start:dev;
