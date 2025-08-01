@@ -1,0 +1,257 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>PLANILLA DE TRANSFERENCIA INTERNA DE BIENES</title>
+    <style>
+        :root {
+            --my--font: 3mm;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            padding: 0;
+        }
+
+        p,
+        td,
+        th {
+            padding: 0px;
+            margin: 0px;
+            font-size: var(--my--font);
+        }
+
+        td,
+        th {
+            font-size: var(--my--font);
+        }
+
+        .header {
+            height: 27mm;
+            margin-top: 3px;
+        }
+
+        .data-table tbody {
+            height: 110mm;
+        }
+
+        .footer {
+            height: 48mm;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .header-table {
+            width: 100%;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .information-transfer {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #000;
+            border-bottom: 0px solid #000;
+        }
+
+        .information-transfer td {
+            border: 1px solid #000;
+            border-bottom: 0px;
+            font-weight: bold;
+        }
+
+        .data-table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #000;
+            border-bottom: 0px;
+            table-layout: fixed;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #000;
+            border-bottom: 0px;
+            word-wrap: break-word;
+        }
+
+        .data-table tr:last-child td:nth-child(1),
+        .data-table tr:last-child td:nth-child(2),
+        .data-table tr td:nth-child(7) {
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        .data-table tbody tr:first-child th,
+        .data-table tbody tr:last-child th {
+            height: 4mm;
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        .data-table tr td:nth-child(1),
+        .data-table tr td:nth-child(2),
+        .data-table tr td:nth-child(3),
+        .data-table tr td:nth-child(4),
+        .data-table tr td:nth-child(5) {
+            text-align: center;
+        }
+
+        .data-table tr td:nth-child(6) {
+            padding: 0.1cm 0.0cm 0.2cm 0.1cm;
+            word-wrap: break-word;
+            text-align: justify;
+        }
+
+        .footer-table {
+            border-collapse: collapse;
+            border: 1px solid #000;
+            width: 100%;
+        }
+
+        .footer-table td {
+            border: 1px solid #000;
+        }
+
+        .footer-table tr:first-child td:nth-child(3) {
+            vertical-align: top;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <table class="header-table">
+            <tr>
+                <td width="34%" class="center">
+                    <p class="bold">REPUBLICA BOLIVARIANA DE VENEZUELA</p>
+                    <p class="bold">ALCALDIA DEL MUNICIPIO IRIBARREN</p>
+                    <p class="bold">DIRECCION DE ADMINISTRACION Y FINANZAS</p>
+                    <p class="bold">DIVISION DE BIENES MUNICIPAL</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" class="center">
+                    <p>&nbsp;</p>
+                    <P class="header-title">PLANILLA DE TRANSFERENCIA INTERNA DE BIENES</p>
+                    <p>&nbsp;</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="content">
+        <table class="information-transfer">
+            <tr>
+                <td colspan="5" width="40%">
+                    <p>DE: <data-administrativeUnitDes /></p>
+                </td>
+                <td width="40%">
+                    <p>PARA: <data-administrativeUnitInc /></p>
+                </td>
+                <td width="10%">
+                    <p>FECHA: <data-periodDate /></p>
+                </td>
+            </tr>
+        </table>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th width="18%" colspan="4">
+                        <p>CODIGO</p>
+                    </th>
+                    <th width="8%" rowspan="2">
+                        <p>CODIGO DE IDENTIFIC.</p>
+                    </th>
+                    <th width="66%" rowspan="2">
+                        <p>DESCRIPCION DE LOS BIENES</p>
+                    </th>
+                    <th width="8%" rowspan="2">
+                        <p>MONTO EN BOLIVARES</p>
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        <p>GRUPO</p>
+                    </th>
+                    <th>
+                        <p>SUB GRUPO</p>
+                    </th>
+                    <th>
+                        <p>SECC.</p>
+                    </th>
+                    <th>
+                        <p>CANT.</p>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <data-inventory />
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        <table class="footer-table">
+            <tr>
+                <td width="30%">
+                    <p>JEFE DE LA UNIDAD DE TRABAJO QUE ENTREGA CONFORME:</p>
+                    <p>&nbsp;</p>
+                    <p>NOMBRE: <data-directorDes-name /></p>
+                    <p>C.I: <data-directorDes-cedula /></p>
+                    <p>FIRMA:</p>
+                    <p>&nbsp;</p>
+                </td>
+                <td width="30%">
+                    <p>JEFE DE LA UNIDAD DE TRABAJO QUE RECIBE CONFORME:</p>
+                    <p>&nbsp;</p>
+                    <p>NOMBRE: <data-directorInc-name /></p>
+                    <p>C.I: <data-directorInc-cedula /></p>
+                    <p>FIRMA:</p>
+                    <p>&nbsp;</p>
+                </td>
+                <td width="40%" rowspan="2">
+                    <p>OBSERVACIONES: <data-observation /></p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>REPRESENTANTE DE BIENES DE LA UNIDAD DE TRABAJO QUE ENTREGA CONFORME:</p>
+                    <p>&nbsp;</p>
+                    <p>NOMBRE: <data-responsibleDes-name /></p>
+                    <p>C.I: <data-responsibleDes-cedula /></p>
+                    <p>FIRMA:</p>
+                    <p>&nbsp;</p>
+                </td>
+                <td>
+                    <p>REPRESENTANTE DE BIENES DE LA UNIDAD DE TRABAJO QUE RECIBE CONFORME:</p>
+                    <p>&nbsp;</p>
+                    <p>NOMBRE: <data-responsibleInc-name /></p>
+                    <p>C.I: <data-responsibleInc-cedula /></p>
+                    <p>FIRMA:</p>
+                    <p>&nbsp;</p>
+                </td>
+            </tr>
+        </table>
+        <div class="right" style="margin: 5px 0px 0px 0px;">
+            <p>
+                <pag />
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

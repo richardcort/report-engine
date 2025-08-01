@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es-VE">
+
+<head>
+    <meta charset="utf-8">
+    <title>Inventario General de Bienes</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 3.5mm;
+            padding: 0;
+        }
+
+        p {
+            line-height: 1.15;
+            margin: 0;
+            margin-bottom: 0.2mm;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 4px;
+            width: 200px;
+            vertical-align: top;
+        }
+
+        .header {
+            height: 23mm;
+        }
+
+        .inventory-table tbody {
+            height: 125mm;
+        }
+
+        .footer {
+            height: 25mm;
+        }
+
+        .header-table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .header-data {
+            position: relative;
+            overflow: visible;
+            white-space: nowrap;
+        }
+
+        .header-title-date {
+            overflow: hidden;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .bold-text {
+            font-weight: 600;
+        }
+
+        .inventory-table {
+            table-layout: fixed;
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+            padding: 0.1cm 0.0cm 0.2cm 0.1cm;
+            word-wrap: break-word;
+        }
+
+        .inventory-table th {
+            border: 1px solid #000;
+            padding: 0 0 0 1mm;
+            height: 0.5mm;
+            font-weight: 600;
+        }
+
+        .inventory-table td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+        }
+
+        .inventory-table tr td:nth-child(1),
+        .inventory-table tr td:nth-child(2),
+        .inventory-table tr td:nth-child(3),
+        .inventory-table tr td:nth-child(4) {
+            text-align: center;
+            padding-left: 0;
+        }
+
+        .inventory-table tbody tr:first-child th:nth-child(7),
+        .inventory-table tr:last-child th:nth-child(2),
+        .inventory-table tr td:nth-child(7) {
+            text-align: right;
+            padding-right: 10px;
+            background-color: blueviolet;
+        }
+
+        .bordered-group {
+            border: 1px solid #000;
+            border-top: 0px;
+        }
+
+        .bordered-group td {
+            border: none;
+            padding: 0.1cm;
+        }
+
+        .title-signature {
+            margin-bottom: 3mm;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <table class="header-table">
+            <tr>
+                <td width="33%" class="header-data">
+                    <p><span class="bold-text">Organismo:</span> <data-organism /></p>
+                    <p><span class="bold-text">Servicios:</span> <data-service /></p>
+                    <p><span class="bold-text">Unidad Administrativa:</span> <data-administrativeUnit /></p>
+                    <p><span class="bold-text">Distrito:</span> <data-district /></p>
+                    <p><span class="bold-text">Dirección o Lugar:</span> <data-addressOrLocation /></p>
+                </td>
+
+                <td width="33%" class="text-center header-title-date">
+                    <p><br></p>
+                    <p><br></p>
+                    <p><br></p>
+                    <p class="bold-text">INVENTARIO GENERAL DE BIENES</p>
+                </td>
+
+                <td width="33%" class="text-right header-title-date">
+                    <p>FECHA DE CORTE: <data-cutOfDate /></p>
+                    <p>FECHA DE IMPRESION: <data-printOfDate /></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="content">
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th width="4%" class="text-left">Grupo</th>
+                    <th width="6%" class="text-left">Subgrupo</th>
+                    <th width="3%" class="text-left">Secc</th>
+                    <th width="3%" class="text-left">Cant</th>
+                    <th width="10%" class="text-left">Identificación</th>
+                    <th width="63%" class="text-left">Denominación</th>
+                    <th width="9%" class="text-center">Valor Bs.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <data-inventory />
+            </tbody>
+        </table>
+    </div>
+
+    <div class="fotter">
+        <table>
+            <tr>
+                <td class="bordered-group" width="42%">
+                    <table width="100%">
+                        <tr>
+                            <td width="50%">
+                                <p class="title-signature">JEFE DE LA UNIDAD DE TRABAJO</p>
+                                <p>Nombre y Apellido:</p>
+                                <data-headOfTheWorkUnit-nameAndSurname />
+                                <p>C.I: <data-headOfTheWorkUnit-cedula /></p>
+                                <p>FIRMA:</p>
+                            </td>
+                            <td width="50%">
+                                <p class="text-center title-signature">RESPONSABLES DE BIENES</p>
+                                <p>Nombre y Apellido:</p>
+                                <data-responsiblesForAssets-nameAndSurname />
+                                <p>C.I: <data-responsiblesForAssets-cedula /></p>
+                                <p>FIRMA:</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+
+                <td class="bordered-group" width="58%">
+                    <table width="100%">
+                        <tr>
+                            <td width="50%">
+                                <p class="text-right title-signature">POR LA DIVISIÓN DE BIENES</p>
+                                <p>Nombre y Apellido:</p>
+                                <data-assetDivision-nameAndSurname1 />
+                                <p>C.I: <data-assetDivision-cedula1 /></p>
+                                <p>JEFE DE LA DIVISIÓN DE BIENES</p>
+                            </td>
+                            <td width="50%">
+                                <p class="title-signature"><br></p>
+                                <p>Nombre y Apellido:</p>
+                                <data-assetDivision-nameAndSurname2 />
+                                <p>C.I: <data-assetDivision-cedula2 /></p>
+                                <p>ASISTENTE ADMINISTRATIVO</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div class="text-right" style="margin: 10px 0px 0px 0px;">
+            <pag />
+        </div>
+    </div>
+</body>
+
+</html>
