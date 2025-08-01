@@ -2,7 +2,25 @@ version: '3.9'
 services:
   report-engine:
     container_name: report-engine
-    build: .
+    restart: unless-stopped
     ports:
       - 4000:3000
-    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: "3"
+          memory: 999M
+        reservations:
+          cpus: "3"
+          memory: 700M
+    networks:
+      alfa_network:
+        ipv4_address: 172.21.20.8
+        hostname: report-engine
+
+networks:
+  alfa_network:
+    external: true

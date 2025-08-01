@@ -1,20 +1,12 @@
-FROM node:22-bookworm
+FROM node:22 as base
 
-RUN apt-get update && apt-get install -y \
-    wkhtmltopdf \
-    # Limpieza
-    && rm -rf /var/lib/apt/lists/*
-    
 WORKDIR /app
 
 RUN npm install -g pnpm
 
-COPY package.json package-lock.json ./
-
-RUN pnpm install
-
 COPY . .
 
-RUN pnpm build
+RUN pnpm fetch
+RUN pnpm install
 
-CMD ["pnpm", "start:prod"]
+CMD pnpm build; pnpm start:dev;

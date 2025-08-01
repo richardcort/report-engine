@@ -6,18 +6,21 @@ import puppeteer from 'puppeteer';
 
 @Injectable()
 export class ReportGeneratorService {
-  async create(reportData: CreateReportGeneratorDto) {
+  protected htmlContent: string = '';
+  private data: object;
+  private templatePath: string;
+  private template: any;
+
+  async create(
+    reportData: CreateReportGeneratorDto,
+  ): Promise<{ statusCode: number; message: string; data: Buffer }> {
     try {
-      let { template, data } = reportData;
+      var { template, data } = reportData;
+      this.data = data;
+      this.template = template;
+      this.templatePath = path.join(__dirname, '/..', '/templates/', `${template.name}.html`);
 
-      const templatePath: string = path.join(
-        __dirname,
-        '/..',
-        '/templates/',
-        `${template}.html`,
-      );
-
-      if (!fs.existsSync(templatePath)) {
+      if (!fs.existsSync(this.templatePath)) {
         return {
           statusCode: 404,
           message: 'Template not found',
@@ -25,13 +28,23 @@ export class ReportGeneratorService {
         };
       }
 
-      let htmlContent: string = fs.readFileSync(templatePath, 'utf8');
+      this.htmlContent = fs.readFileSync(this.templatePath, 'utf8');
 
-      Object.keys(data).forEach((key) => {
-        htmlContent = this.processDataKey(htmlContent, key, data[key]);
-      });
+      switch (this.template.name) {
+        case 'bm2':
+          await this.bm2();
+          break;
+        case 'internal-transfer':
+          await this.internalTransfer();
+          break;
+        case 'general-inventory-of-assets':
+          await this.bm1();
+          break;
+        default:
+          break;
+      }
 
-      const pdfBuffer = await this.generatePdf(htmlContent);
+      let pdfBuffer = await this.generatePdf();
 
       return {
         statusCode: 200,
@@ -44,7 +57,7 @@ export class ReportGeneratorService {
     }
   }
 
-  private async generatePdf(htmlContent: string) {
+  private async generatePdf() {
     const browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -52,65 +65,408 @@ export class ReportGeneratorService {
 
     const page = await browser.newPage();
 
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    await page.setContent(this.htmlContent, { waitUntil: 'networkidle0' });
 
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      landscape: true,
-    });
+    delete this.template.name;
+    const pdfBuffer = await page.pdf(this.template);
 
     await browser.close();
 
     return Buffer.from(pdfBuffer);
   }
 
-  private processDataKey(htmlContent: string, key: string, value: any) {
-    if (Array.isArray(value) && htmlContent.includes(`<data-${key} />`)) {
-      return this.replaceHtmlTags(
-        htmlContent,
-        key,
-        this.arrayToHtmlRows(value),
-      );
-    }
-    if (typeof value === 'object' && value !== null) {
-      return this.processNestedObject(htmlContent, key, value);
-    }
-    return this.replaceHtmlTags(htmlContent, key, value);
+  private processDataKey(key: string, value: any): void {
+    if (typeof value === 'object' && value !== null)
+      this.processNestedObject(key, value);
+    else this.replaceHtmlTags(key, value);
   }
 
-  private processNestedObject(
-    htmlContent: string,
-    key: string,
-    nestedObject: object,
-  ) {
+  private processNestedObject(key: string, nestedObject: object): void {
     Object.entries(nestedObject).forEach(([subKey, subValue]) => {
-      htmlContent = this.replaceHtmlTags(
-        htmlContent,
-        `${key}-${subKey}`,
-        subValue,
-      );
+      this.replaceHtmlTags(`${key}-${subKey}`, subValue);
     });
-    return htmlContent;
   }
 
-  private replaceHtmlTags(htmlContent: string, key: string, value: any) {
-    return (htmlContent = htmlContent.replace(`<data-${key} />`, `${value}`));
+  private replaceHtmlTags(key: string, value: any): void {
+    const regexKey = new RegExp(`<data-${key} />`, 'g');
+    this.htmlContent = this.htmlContent.replace(regexKey, `${value}`);
   }
 
-  private arrayToHtmlRows(array: any[]) {
-    if (!array.length) return '';
+  private formatNumberSpanish(number: number): string {
+    return number.toLocaleString('es-VE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
 
-    let rows = array
-      .map(
-        (item) =>
-          `<tr>
-                ${Object.values(item)
-                  .map((value) => `<td>${value}</td>`)
-                  .join('')}
-          </tr>`,
-      )
-      .join('');
+  private bm1(): void {
+    const tempTemplate = '<br>' + fs.readFileSync(this.templatePath, 'utf8');
 
-    return rows;
+    this.htmlContent = this.htmlContent.replace(
+      `<data-inventory />`,
+      `<data-inventory-0 />`,
+    );
+
+    let lettrePerLine = 115;
+    let maxLine = 28;
+    let lineCounter = 0;
+    let htmlTable = ``;
+    let total = 0;
+    let tables: string[] = [];
+
+    for (let i = 0; i < this.data['inventory'].length; i++) {
+      let count = Math.ceil(
+        this.data['inventory'][i].description.length / lettrePerLine,
+      );
+
+      if (count > maxLine) {
+        count = maxLine;
+      }
+
+      if (count + lineCounter <= maxLine) {
+        if (lineCounter === 0 && i !== 0) {
+          htmlTable += `
+        <tr>
+          <th></th><th></th><th></th><th></th><th></th>
+          <th width="65%" class="text-right">VIENEN...</th>
+          <th width="5%">${this.formatNumberSpanish(total)}</th>
+        </tr>
+      `;
+        }
+
+        htmlTable += `
+      <tr>
+        <td>${this.data['inventory'][i]['group_code']}</td>
+        <td>${this.data['inventory'][i]['sub_group_code']}</td>
+        <td>${this.data['inventory'][i]['section_code']}</td>
+        <td>1</td>
+        <td>${this.data['inventory'][i]['identify_number']}</td>
+        <td style="text-align: justify; padding-right: 5px;">${this.data['inventory'][i]['description']}</td>
+        <td>${this.formatNumberSpanish(parseFloat(this.data['inventory'][i]['amount']))}</td>
+      </tr>
+    `;
+
+        total += this.data['inventory'][i]['amount'];
+        lineCounter += count + 1;
+
+        if (lineCounter > maxLine) {
+          let concatTotal =
+            i === this.data['inventory'].length - 1 ? 'TOTAL...' : 'VAN...';
+          htmlTable += `
+            
+        <tr>
+          <th colspan="6" class="text-right">${concatTotal}</th>
+          <th width="5%">${this.formatNumberSpanish(total)}</th>
+        </tr>
+      `;
+          tables.push(htmlTable);
+          htmlTable = '';
+          lineCounter = 0;
+        }
+      } else {
+        let concatTotal =
+          i === this.data['inventory'].length ? 'TOTAL...' : 'VAN...';
+        htmlTable += `
+      <tr>
+        <th colspan="6" class="text-right">${concatTotal}</th>
+        <th width="5%">${this.formatNumberSpanish(total)}</th>
+      </tr>
+    `;
+        tables.push(htmlTable);
+        htmlTable = '';
+        lineCounter = 0;
+        i -= 1;
+      }
+    }
+
+    if (htmlTable !== '') {
+      htmlTable += `
+          <tr>
+            <th colspan="6" class="text-right">TOTAL...</th>
+            <th width="5%">${this.formatNumberSpanish(total)}</th>
+          </tr>
+        `;
+      tables.push(htmlTable);
+    }
+
+    for (let i = 1; i < tables.length; i++) {
+      this.htmlContent += tempTemplate.replace(
+        `<data-inventory />`,
+        `<data-inventory-${i} />`,
+      );
+    }
+
+    for (let i = 0; i < tables.length; i++) {
+      this.htmlContent = this.htmlContent.replace(
+        `<pag />`,
+        `Pag. ${i + 1}/${tables.length}`,
+      );
+    }
+
+    tables.forEach((table, index) => {
+      this.replaceHtmlTags(`inventory-${index}`, table);
+    });
+
+    Object.keys(this.data).forEach((key) => {
+      this.processDataKey(key, this.data[key]);
+    });
+  }
+
+  private internalTransfer(): void {
+    let tempTemplate = fs.readFileSync(this.templatePath, 'utf8');
+
+    this.htmlContent = this.htmlContent.replace(
+      `<data-inventory />`,
+      `<data-inventory-0 />`,
+    );
+
+    let letterPerLine = 115;
+    let maxLine = 32;
+    let lineCounter = 0;
+
+    let htmlTable = ``;
+    let total = 0;
+
+    let tables: string[] = [];
+
+    for (let i = 0; i < this.data['inventory'].length; i++) {
+      let account = Math.ceil(
+        this.data['inventory'][i].description.length / letterPerLine,
+      );
+
+      if (account > maxLine) {
+        account = maxLine;
+      }
+
+      if (account + lineCounter <= maxLine) {
+        if (lineCounter === 0 && i !== 0) {
+          htmlTable += `
+            <tr>
+              <th colspan="6">
+                <p>VIENEN...</p>
+              </th>
+              <th>
+                ${this.formatNumberSpanish(total)}
+              </th>
+            </tr>`;
+        }
+
+        htmlTable += `
+        <tr>
+          <td>${this.data['inventory'][i]['group_code']}</td>
+          <td>${this.data['inventory'][i]['sub_group_code']}</td>
+          <td>${this.data['inventory'][i]['section_code']}</td>
+          <td>1</td>
+          <td>${this.data['inventory'][i]['identify_number']}</td>
+          <td>${this.data['inventory'][i]['description'].toUpperCase()}</td>
+          <td>${this.formatNumberSpanish(parseFloat(this.data['inventory'][i]['amount']))}</td>
+        </tr>
+      `;
+
+        total += this.data['inventory'][i]['amount'];
+        lineCounter += account + 1;
+
+        if (lineCounter > maxLine) {
+          let concatTotal =
+            i === this.data['inventory'].length - 1 ? 'TOTAL...' : 'VAN...';
+          htmlTable += `
+            <tr>
+              <th colspan="6">
+                ${concatTotal}
+              </th>
+              <th>
+                ${this.formatNumberSpanish(total)}
+              </th>
+            </tr>
+          `;
+
+          tables.push(htmlTable);
+          htmlTable = '';
+          lineCounter = 0;
+        }
+      } else {
+        let concatTotal =
+          i === this.data['inventory'].length ? 'TOTAL...' : 'VAN...';
+        htmlTable += `
+            <tr>
+              <th colspan="6">
+                ${concatTotal}
+              </th>
+              <th>
+                ${this.formatNumberSpanish(total)}
+              </th>
+            </tr>
+          `;
+
+        tables.push(htmlTable);
+        htmlTable = '';
+        lineCounter = 0;
+        i -= 1;
+      }
+    }
+
+    if (htmlTable !== '') {
+      htmlTable += `
+        <tr>
+            <th colspan="6">
+              TOTAL...
+            </th>
+            <th>
+              ${this.formatNumberSpanish(total)}
+            </th>
+          </tr>
+      `;
+      tables.push(htmlTable);
+    }
+
+    for (let i = 1; i < tables.length; i++) {
+      this.htmlContent += tempTemplate.replace(
+        `<data-inventory />`,
+        `<data-inventory-${i} />`,
+      );
+    }
+
+    for (let i = 0; i < tables.length; i++) {
+      this.htmlContent = this.htmlContent.replace(
+        `<pag />`,
+        `Pag. ${i + 1}/${tables.length}`,
+      );
+    }
+
+    tables.forEach((table, index) => {
+      this.replaceHtmlTags(`inventory-${index}`, table);
+    });
+
+    Object.keys(this.data).forEach((key) => {
+      this.processDataKey(key, this.data[key]);
+    });
+  }
+
+  private bm2() {
+    const motion_concept = this.data['motionConcept'];
+    const tempTemplate = fs.readFileSync(this.templatePath, 'utf8');
+
+    this.htmlContent = this.htmlContent.replace(
+      `<data-inventory />`,
+      `<data-inventory-0 />`,
+    );
+
+    let letterPerLine = 75;
+    let maxLine = 34;
+    let lineCounter = 0;
+    let total = 0;
+    let tables: string[] = [];
+    let isIncorporation =
+      this.data['motionConcept'] >= 1 && this.data['motionConcept'] < 51;
+
+    let htmlTable = ``;
+    for (let i = 0; i < this.data['inventory'].length; i++) {
+      let cellAmount = isIncorporation
+        ? `<td>${this.formatNumberSpanish(parseFloat(this.data['inventory'][i]['amount']))}</td><td></td>`
+        : `<td></td><td>${this.formatNumberSpanish(parseFloat(this.data['inventory'][i]['amount']))}</td>`;
+
+      let count = Math.ceil(
+        this.data['inventory'][i].description.length / letterPerLine,
+      );
+
+      if (count > maxLine) {
+        count = maxLine;
+      }
+
+      if (count + lineCounter <= maxLine) {
+        if (lineCounter === 0 && i !== 0) {
+          htmlTable += `
+            <tr>
+              <th colspan="8">VIENEN...</th>
+              ${isIncorporation ? '' : `<th></th>`}
+              <th colspan="1">${this.formatNumberSpanish(total)}</th>
+              ${isIncorporation ? `<th></th>` : ''}
+              </tr>
+              `;
+        }
+
+        htmlTable += `
+      <tr>
+        <td>${this.data['inventory'][i]['group_code']}</td>
+        <td>${this.data['inventory'][i]['sub_group_code']}</td>
+        <td>${this.data['inventory'][i]['section_code']}</td>
+        <td>${motion_concept}</td>
+        <td>1</td>
+        <td>${this.data['inventory'][i]['identify_number']}</td>
+        <td colspan="2">${this.data['inventory'][i]['description'].toUpperCase()}</td>
+        ${cellAmount}
+      </tr>
+    `;
+
+        total += this.data['inventory'][i]['amount'];
+        lineCounter += count + 1;
+
+        if (lineCounter > maxLine) {
+          let concatTotal =
+            i === this.data['inventory'].length - 1 ? 'TOTAL...' : 'VAN...';
+          htmlTable += `
+            <tr>
+            <th colspan="8">${concatTotal}</th>
+            ${isIncorporation ? '' : `<th></th>`}
+              <th colspan="1">${this.formatNumberSpanish(total)}</th>
+              ${isIncorporation ? '<th></th>' : ''}
+            </tr>
+            `;
+          tables.push(htmlTable);
+          htmlTable = '';
+          lineCounter = 0;
+        }
+      } else {
+        let concatTotal =
+          i === this.data['inventory'].length ? 'TOTAL...' : 'VAN...';
+        htmlTable += `
+            <tr>
+            <th colspan="8" >${concatTotal}</th>
+            ${isIncorporation ? '' : `<th></th>`}
+              <th colspan="1">${this.formatNumberSpanish(total)}</th>
+              ${isIncorporation ? '<th></th>' : ''}
+            </tr>
+            `;
+
+        tables.push(htmlTable);
+        htmlTable = '';
+        lineCounter = 0;
+        i -= 1;
+      }
+    }
+
+    if (htmlTable !== '') {
+      htmlTable += `
+        <tr>
+            <th colspan="8">TOTAL...</th>
+            ${isIncorporation ? '' : `<th></th>`}
+              <th colspan="1">${this.formatNumberSpanish(total)}</th>
+              ${isIncorporation ? '<th></th>' : ''}
+            </tr>
+            `;
+      tables.push(htmlTable);
+    }
+
+    for (let i = 1; i < tables.length; i++) {
+      this.htmlContent += tempTemplate.replace(
+        `<data-inventory />`,
+        `<data-inventory-${i} />`,
+      );
+    }
+
+    for (let i = 0; i < tables.length; i++) {
+      this.htmlContent = this.htmlContent.replace(
+        `<pag />`,
+        `Pag. ${i + 1}/${tables.length}`,
+      );
+    }
+
+    tables.forEach((table, index) => {
+      this.replaceHtmlTags(`inventory-${index}`, table);
+    });
+
+    Object.keys(this.data).forEach((key) => {
+      this.processDataKey(key, this.data[key]);
+    });
   }
 }

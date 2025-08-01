@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>FORMULARIO BM-2</title>
+    <style>
+        :root {
+            --my--font: 3mm;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        p,
+        td,
+        th {
+            margin: 0;
+            padding: 0;
+        }
+
+        td,
+        th {
+            font-size: var(--my--font);
+        }
+
+        .header {
+            height: 30mm;
+        }
+
+        .content {
+            height: 135mm;
+        }
+
+        .data-table tbody {
+            height: 122mm;
+        }
+
+        .footer {
+            height: 35mm;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .thick-right-border {
+            border-right: 1.5pt solid #000;
+        }
+
+        .header-table {
+            width: 100%;
+        }
+
+        .header-table tr:first-child td {
+            text-align: center;
+        }
+
+        .information {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #000;
+            border-bottom: 0px solid #000;
+        }
+
+        .data-table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 1px solid #000;
+            border-bottom: 0px;
+            table-layout: fixed;
+        }
+
+        .data-table tr:first-child th,
+        .data-table td {
+            text-align: center;
+        }
+
+        .data-table td:nth-child(9),
+        .data-table td:nth-child(8) {
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        .data-table tr td:nth-child(7) {
+            padding: 0.1cm 0.0cm 0.2cm 0.1cm;
+        }
+        
+        .data-table tbody tr:first-child th,
+        .data-table tbody tr:last-child th {
+            height: 4mm;
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #000;
+            border-bottom: 0px;
+        }
+
+        .data-table tr td:nth-child(7) {
+            text-align: justify;
+            word-wrap: break-word;
+        }
+
+        .footer-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .footer-table tr:first-child td {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <table class="header-table" width="100%">
+            <tr>
+                <td>
+                    <p>RELACION DEL MOVIMIENTO DE BIENES MUEBLES</p>
+                </td>
+                <td>
+                    <p>FORMULARIO BM-2</p>
+                </td>
+                <td>
+                    <p>
+                        <pag />
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>ESTADO: <data-state /></p>
+                    <p>DISTRITO: <data-district /></p>
+                    <p>MUNICIPIO: <data-municipality /></p>
+                    <p>DIRECCION O LUGAR: <data-addressOrLocation /></p>
+                    <p>DEPENDENCIA O UNIDAD PRIMARIA: <data-dependence /></p>
+                    <p>SERVICIO: <data-service /></p>
+                    <p>UNIDAD DE TRABAJO O DEPENDENCIA: <data-administrativeUnit /></p>
+                    <p>PERIODO DE LA CUENTA (MES Y AÑO): <data-periodDate /></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="content">
+        <table class="information">
+            <tr>
+                <th colspan="10">
+                    <p>
+                        EN EL MES DE LA CUENTA HA OCURRIDO EL SIGUIENTE MOVIMIENTO EN LOS BIENES A CARGO DE ESTA
+                        DEPENDENCIA.
+                    </p>
+                </th>
+            </tr>
+        </table>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th colspan="3" width="15%">
+                        <p>CLASIFICACION (CODIGO)</p>
+                    </th>
+                    <th rowspan="2" width="7%">
+                        <p>CONCEPTO DE MOVIMIENTO</p>
+                    </th>
+                    <th rowspan="2" width="3%">
+                        <p>CANT.</p>
+                    </th>
+                    <th rowspan="2" width="8%">
+                        <p>NUMERO DE IDENTIFICACION</p>
+                    </th>
+                    <th rowspan="2" colspan="2" width="43%">
+                        <p>NOMBRE Y DESCRIPCION DE LOS BIENES REFERENCIA DE LOS COMPROBANTES Y DE LOS PRECIOS UNITARIOS
+                        </p>
+                    </th>
+                    <th width="12%">
+                        <p>INCORPORACIONES Bs.</p>
+                    </th>
+                    <th width="12%">
+                        <p>DESINCORPORACIONES Bs.</p>
+                    </th>
+                </tr>
+                <tr>
+                    <th>
+                        <p>GRUPO</p>
+                    </th>
+                    <th>
+                        <p>SUBGRUPO</p>
+                    </th>
+                    <th>
+                        <p>SECC.</p>
+                    </th>
+                    <th colspan="2">
+                        <p>CIFRAS CONVENCINALES</p>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <data-inventory />
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        <table class="footer-table" width="100%">
+            <tbody>
+                <tr>
+                    <td colspan="5" class="center">
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p class="bold">__________________________</p>
+                        <p>&nbsp;</p>
+                        <p class="bold"><data-director-name /></p>
+                        <p class="bold"><data-director-cedula /></p>
+                        <p>JEFE DE LA UNIDAD DE TRABAJO</p>
+                        <p>NOMBRE Y APELLIDO</p>
+                        <p>&nbsp;</p>
+                    </td>
+                    <td colspan="3" class="center">
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p class="bold">__________________________</p>
+                        <p>&nbsp;</p>
+                        <p class="bold"><data-responsible-name /></p>
+                        <p class="bold"><data-responsible-cedula /></p>
+                        <p>ENCARGADOS DE BIENES</p>
+                        <p>NOMBRE Y APELLIDO</p>
+                        <p>&nbsp;</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
