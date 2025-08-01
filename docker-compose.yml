@@ -7,7 +7,7 @@ services:
       - 7553:3000
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: DockerFile
     deploy:
       resources:
         limits:
