@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
-            font-size: 3.5mm;
+            font-size: 10.5px;
             padding: 0;
         }
 
@@ -19,7 +19,7 @@
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: collapse !important;
         }
 
         td {
@@ -29,15 +29,15 @@
         }
 
         .header {
-            height: 23mm;
+            height: 19mm;
         }
 
         .inventory-table tbody {
-            height: 125mm;
+            height: 136mm;
         }
 
-        .footer {
-            height: 25mm;
+        .footer table{
+            height: 26mm;
         }
 
         .header-table {
@@ -56,15 +56,15 @@
         }
 
         .text-center {
-            text-align: center;
+            text-align: center !important;
         }
 
         .text-right {
-            text-align: right;
+            text-align: right !important;
         }
 
         .text-left {
-            text-align: left;
+            text-align: left !important;
         }
 
         .bold-text {
@@ -83,10 +83,11 @@
 
         .inventory-table th {
             border: 1px solid #000;
-            padding: 0 0 0 1mm;
+            padding: 0 0 0 3.5px;
             height: 0.5mm;
             font-weight: 600;
-        }
+            font-size: 10.5px;
+        }   
 
         .inventory-table td {
             border-left: 1px solid #000;
@@ -105,7 +106,7 @@
         .inventory-table tr:last-child th:nth-child(2),
         .inventory-table tr td:nth-child(7) {
             text-align: right;
-            padding-right: 10px;
+            padding-right: 5px;
             background-color: blueviolet;
         }
 
@@ -130,11 +131,11 @@
         <table class="header-table">
             <tr>
                 <td width="33%" class="header-data">
-                    <p><span class="bold-text">Organismo:</span> <data-organism /></p>
-                    <p><span class="bold-text">Servicios:</span> <data-service /></p>
-                    <p><span class="bold-text">Unidad Administrativa:</span> <data-administrativeUnit /></p>
-                    <p><span class="bold-text">Distrito:</span> <data-district /></p>
-                    <p><span class="bold-text">Dirección o Lugar:</span> <data-addressOrLocation /></p>
+                    <p><span class="bold-text">ORGANISMO:</span> <data-organism /></p>
+                    <p><span class="bold-text">SERVICIOS:</span> <data-service /></p>
+                    <p><span class="bold-text">UNIDAD ADMINISTRATIVA:</span> <data-administrativeUnit /></p>
+                    <p><span class="bold-text">DISTRITO:</span> <data-district /></p>
+                    <p><span class="bold-text">DIRECCION O LUGAR:</span> <data-addressOrLocation /></p>
                 </td>
 
                 <td width="33%" class="text-center header-title-date">
@@ -145,8 +146,8 @@
                 </td>
 
                 <td width="33%" class="text-right header-title-date">
-                    <p>FECHA DE CORTE: <data-cutOfDate /></p>
-                    <p>FECHA DE IMPRESION: <data-printOfDate /></p>
+                    <p><strong>FECHA DE CORTE:</strong> <data-cutOfDate /></p>
+                    <p><strong>FECHA DE IMPRESION:</strong> <data-printOfDate /></p>
                 </td>
             </tr>
         </table>
@@ -156,13 +157,13 @@
         <table class="inventory-table">
             <thead>
                 <tr>
-                    <th width="4%" class="text-left">Grupo</th>
-                    <th width="6%" class="text-left">Subgrupo</th>
-                    <th width="3%" class="text-left">Secc</th>
-                    <th width="3%" class="text-left">Cant</th>
-                    <th width="10%" class="text-left">Identificación</th>
-                    <th width="63%" class="text-left">Denominación</th>
-                    <th width="9%" class="text-center">Valor Bs.</th>
+                    <th width="5%" class="text-left">GRUPO</th>
+                    <th width="5%" class="text-left">SUB GRUPO</th>
+                    <th width="5%" class="text-left">SECC</th>
+                    <th width="4%" class="text-left">CANT</th>
+                    <th width="12%" class="text-left">IDENTIFICACIÓN</th>
+                    <th width="58%" class="text-left">DENOMINACIÓN</th>
+                    <th width="9%" class="text-center">VALOR Bs.</th>
                 </tr>
             </thead>
             <tbody>
@@ -179,14 +180,14 @@
                         <tr>
                             <td width="50%">
                                 <p class="title-signature">JEFE DE LA UNIDAD DE TRABAJO</p>
-                                <p>Nombre y Apellido:</p>
+                                <p>NOMBRE Y APELLIDO:</p>
                                 <data-headOfTheWorkUnit-nameAndSurname />
                                 <p>C.I: <data-headOfTheWorkUnit-cedula /></p>
                                 <p>FIRMA:</p>
                             </td>
                             <td width="50%">
                                 <p class="text-center title-signature">RESPONSABLES DE BIENES</p>
-                                <p>Nombre y Apellido:</p>
+                                <p>NOMBRE Y APELLIDO:</p>
                                 <data-responsiblesForAssets-nameAndSurname />
                                 <p>C.I: <data-responsiblesForAssets-cedula /></p>
                                 <p>FIRMA:</p>
@@ -200,14 +201,14 @@
                         <tr>
                             <td width="50%">
                                 <p class="text-right title-signature">POR LA DIVISIÓN DE BIENES</p>
-                                <p>Nombre y Apellido:</p>
+                                <p>NOMBRE Y APELLIDO:</p>
                                 <data-assetDivision-nameAndSurname1 />
                                 <p>C.I: <data-assetDivision-cedula1 /></p>
                                 <p>JEFE DE LA DIVISIÓN DE BIENES</p>
                             </td>
                             <td width="50%">
                                 <p class="title-signature"><br></p>
-                                <p>Nombre y Apellido:</p>
+                                <p>NOMBRE Y APELLIDO:</p>
                                 <data-assetDivision-nameAndSurname2 />
                                 <p>C.I: <data-assetDivision-cedula2 /></p>
                                 <p>ASISTENTE ADMINISTRATIVO</p>
@@ -221,6 +222,7 @@
             <pag />
         </div>
     </div>
+    <br>
 </body>
 
 </html>

@@ -6,7 +6,7 @@
     <title>FORMULARIO BM-2</title>
     <style>
         :root {
-            --my--font: 3mm;
+            --my--font: 10.5px;
         }
 
         body {
@@ -34,7 +34,7 @@
         }
 
         .data-table tbody {
-            height: 122mm;
+            height: 121.5mm;
         }
 
         .footer {
@@ -63,6 +63,11 @@
 
         .header-table tr:first-child td {
             text-align: center;
+        }
+
+        .header-table tr:first-child td:nth-child(2),
+        .header-table tr:first-child td:nth-child(1) {
+            font-weight: bold;
         }
 
         .information {
@@ -94,7 +99,7 @@
         .data-table tr td:nth-child(7) {
             padding: 0.1cm 0.0cm 0.2cm 0.1cm;
         }
-        
+
         .data-table tbody tr:first-child th,
         .data-table tbody tr:last-child th {
             height: 4mm;
@@ -142,14 +147,14 @@
             </tr>
             <tr>
                 <td>
-                    <p>ESTADO: <data-state /></p>
-                    <p>DISTRITO: <data-district /></p>
-                    <p>MUNICIPIO: <data-municipality /></p>
-                    <p>DIRECCION O LUGAR: <data-addressOrLocation /></p>
-                    <p>DEPENDENCIA O UNIDAD PRIMARIA: <data-dependence /></p>
-                    <p>SERVICIO: <data-service /></p>
-                    <p>UNIDAD DE TRABAJO O DEPENDENCIA: <data-administrativeUnit /></p>
-                    <p>PERIODO DE LA CUENTA (MES Y AÑO): <data-periodDate /></p>
+                    <p><strong>ESTADO:</strong> <data-state /></p>
+                    <p><strong>DISTRITO:</strong> <data-district /></p>
+                    <p><strong>MUNICIPIO:</strong> <data-municipality /></p>
+                    <p><strong>DIRECCION O LUGAR:</strong> <data-addressOrLocation /></p>
+                    <p><strong>DEPENDENCIA O UNIDAD PRIMARIA:</strong> <data-dependence /></p>
+                    <p><strong>SERVICIO:</strong> <data-service /></p>
+                    <p><strong>UNIDAD DE TRABAJO O DEPENDENCIA:</strong> <data-administrativeUnit /></p>
+                    <p><strong>PERIODO DE LA CUENTA (MES Y AÑO):</strong> <data-periodDate /></p>
                 </td>
             </tr>
         </table>
@@ -169,8 +174,8 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th colspan="3" width="15%">
-                        <p>CLASIFICACION (CODIGO)</p>
+                    <th colspan="3" width="14%">
+                        <p>CODIGO</p>
                     </th>
                     <th rowspan="2" width="7%">
                         <p>CONCEPTO DE MOVIMIENTO</p>
@@ -178,18 +183,18 @@
                     <th rowspan="2" width="3%">
                         <p>CANT.</p>
                     </th>
-                    <th rowspan="2" width="8%">
-                        <p>NUMERO DE IDENTIFICACION</p>
+                    <th rowspan="2" width="9%">
+                        <p>NUMERO DE IDENTIFIC.</p>
                     </th>
                     <th rowspan="2" colspan="2" width="43%">
                         <p>NOMBRE Y DESCRIPCION DE LOS BIENES REFERENCIA DE LOS COMPROBANTES Y DE LOS PRECIOS UNITARIOS
                         </p>
                     </th>
                     <th width="12%">
-                        <p>INCORPORACIONES Bs.</p>
+                        <p>INCORPORACIONES</p>
                     </th>
                     <th width="12%">
-                        <p>DESINCORPORACIONES Bs.</p>
+                        <p>DESINCORPORACIONES</p>
                     </th>
                 </tr>
                 <tr>
@@ -197,13 +202,13 @@
                         <p>GRUPO</p>
                     </th>
                     <th>
-                        <p>SUBGRUPO</p>
+                        <p>SUB GRUPO</p>
                     </th>
                     <th>
                         <p>SECC.</p>
                     </th>
                     <th colspan="2">
-                        <p>CIFRAS CONVENCINALES</p>
+                        <p>CIFRAS CONVENCINALES Bs.</p>
                     </th>
                 </tr>
             </thead>
