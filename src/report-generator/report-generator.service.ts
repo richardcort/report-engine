@@ -100,15 +100,15 @@ export class ReportGeneratorService {
   }
 
   private bm1(): void {
-    const tempTemplate = '<br>' + fs.readFileSync(this.templatePath, 'utf8');
+    const tempTemplate = fs.readFileSync(this.templatePath, 'utf8');
 
     this.htmlContent = this.htmlContent.replace(
       `<data-inventory />`,
       `<data-inventory-0 />`,
     );
 
-    let lettrePerLine = 115;
-    let maxLine = 28;
+    let lettrePerLine = 81;
+    let maxLine = 40;
     let lineCounter = 0;
     let htmlTable = ``;
     let total = 0;
@@ -141,7 +141,7 @@ export class ReportGeneratorService {
         <td>${this.data['inventory'][i]['section_code']}</td>
         <td>1</td>
         <td>${this.data['inventory'][i]['identify_number']}</td>
-        <td style="text-align: justify; padding-right: 5px;">${this.data['inventory'][i]['description']}</td>
+        <td style="text-align: justify; padding-right: 5px;">${this.data['inventory'][i]['description'].toUpperCase()}</td>
         <td>${this.formatNumberSpanish(parseFloat(this.data['inventory'][i]['amount']))}</td>
       </tr>
     `;
@@ -208,7 +208,7 @@ export class ReportGeneratorService {
     });
 
     Object.keys(this.data).forEach((key) => {
-      this.processDataKey(key, this.data[key]);
+      this.processDataKey(key, typeof this.data[key] === 'string' ? this.data[key].toUpperCase() : this.data[key]);
     });
   }
 
@@ -338,7 +338,7 @@ export class ReportGeneratorService {
     });
 
     Object.keys(this.data).forEach((key) => {
-      this.processDataKey(key, this.data[key]);
+      this.processDataKey(key, typeof this.data[key] === 'string' ? this.data[key].toUpperCase() : this.data[key]);
     });
   }
 
@@ -466,7 +466,7 @@ export class ReportGeneratorService {
     });
 
     Object.keys(this.data).forEach((key) => {
-      this.processDataKey(key, this.data[key]);
+      this.processDataKey(key, typeof this.data[key] === 'string' ? this.data[key].toUpperCase() : this.data[key]);
     });
   }
 }
