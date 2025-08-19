@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BM-4</title>
+    <style>
+        :root {
+            --my--font: 13.33px;
+        }
+
+        /*General styles*/
+        html {
+            margin: 0%;
+        }
+
+        body {
+            font-family: Times, serif;
+            margin: 0;
+            padding: 26.45px;
+            /* 7mm */
+            width: 1122.51px;
+            /* 297mm*/
+            height: 793.70px;
+            /* 210mm*/
+            font-size: var(--my--font);
+        }
+
+        p,
+        td,
+        th {
+            margin: 0;
+            padding: 0;
+        }
+
+        .all-content {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Header styles */
+        .header {
+            height: 49px;
+            /* 12,96mm */
+            margin-bottom: 30.23px;
+            /*8mm*/
+        }
+
+        .header-table {
+            width: 100%;
+            height: auto;
+        }
+
+        .report-title {
+            font-weight: bold;
+            text-align: center;
+            width: 50%;
+        }
+
+        .report-name {
+            width: 100%;
+            font-weight: bold;
+            text-align: right;
+            padding-right: 10%;
+        }
+
+        /* Content styles */
+        .content {
+            margin-bottom: 30.23px;
+            /* 8mm */
+            height: 301px;
+            /* 79,63mm */
+        }
+
+        .information-table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            height: 45.35px;
+            /* 12mm */
+        }
+
+        .information-table tr:last-child td:nth-child(3) {
+            text-align: center !important;
+            width: 25%;
+        }
+
+        .data-table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            height: 200px;
+            /* 52,91mm */
+        }
+
+        .data-table tr:first-child td:nth-child(1),
+        .data-table tr:nth-child(2) td:nth-child(1),
+        .data-table tr:nth-child(3) td:nth-child(1),
+        .data-table tr:nth-child(4) td:nth-child(1),
+        .data-table tr:nth-child(5) td:nth-child(1) {
+            width: 75%;
+        }
+
+        .data-table tr:first-child td:nth-child(3),
+        .data-table tr:nth-child(2) td:nth-child(3),
+        .data-table tr:nth-child(3) td:nth-child(3),
+        .data-table tr:nth-child(4) td:nth-child(3),
+        .data-table tr:nth-child(5) td:nth-child(3) {
+            text-align: right;
+        }
+
+        /*** Footer styles ***/
+        .footer {
+            height: 193px;
+            /* 51,06mm */
+        }
+
+        .signatures-and-stamp {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+
+        .signatures hr {
+            width: 65%;
+        }
+
+        .stamp {
+            display: flex;
+            align-items: center;
+            padding-right: 20%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="all-content">
+        <div class="header">
+            <table class="header-table">
+                <tr>
+                    <td class="report-name">
+                        FORMULARIO BM-4
+                    </td>
+                </tr>
+                <tr>
+                    <td class="report-title">
+                        RESUMEN DE LA CUENTA DE BIENES MUEBLES
+                        <br>
+                        EN CADA UNIDAD DE TRABJO
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="content">
+            <table class="information-table">
+                <tr>
+                    <td colspan="3"><strong>UNIDAD DE TRABAJO: </strong><data-administrativeUnit /></td>
+                </tr>
+                <tr>
+                    <td><strong>ESTADO: </strong><data-state /></td>
+                    <td colspan="2"><strong>MUNICIPIO: </strong><data-municipality /></td>
+                </tr>
+                <tr>
+                    <td>Correspondiente al mes: <strong><data-month /></strong></td>
+                    <td>Año: <strong><data-year /></strong></td>
+                    <td>(Cifras Convencionales Bs.)</td>
+                </tr>
+            </table>
+            <table class="data-table">
+                <tr>
+                    <td>Existencia
+                        Anterior.............................................................................................................................................................................
+                    </td>
+                    <td><data-previousAmount /></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Incorporaciones en el Mes de la
+                        cuenta..............................................................................................................................................
+                    </td>
+                    <td><data-incAmount /></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Desincorporaciones en el mes de la cuenta por todos los Conceptos,
+                        con.........................................................................................
+                        <br>
+                        excepcion del 60, "Faltantes de Bienes Por Investigar"
+                    </td>
+                    <td></td>
+                    <td><data-desincAmount /></td>
+                </tr>
+                <tr>
+                    <td>
+                        Desincorporaciones en el mes de la cuenta por el Concepto 60 "Faltantes
+                        de...................................................................................
+                        <br>
+                        Bienes Por Investigar"
+                    </td>
+                    <td></td>
+                    <td><data-desinc60Amount /></td>
+                </tr>
+                <tr>
+                    <td>
+                        Existencia
+                        Final..................................................................................................................................................................................
+                    </td>
+                    <td></td>
+                    <td><data-finalAmount /></td>
+                </tr>
+            </table>
+        </div>
+        <div class="footer">
+            <div class="signatures-and-stamp">
+                <div class="signatures">
+                    <br>
+                    <p>Firma del Jefe Responsable de la Unidad de Trabajo</p>
+                    <br><br>
+                    <hr>
+                    <p><data-director /></p>
+                    <p>DIRECTOR(A)</p>
+                    <br><br>
+                    <hr>
+                    <p><data-responsible /></p>
+                    <p>ENCARGADO(A) DE BIENES</p>
+                </div>
+                <div class="stamp">
+                    <p>SELLO DE LA OFICINA</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
