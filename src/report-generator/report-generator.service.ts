@@ -41,6 +41,9 @@ export class ReportGeneratorService {
           await this.bm1();
           break;
         default:
+          Object.keys(this.data).forEach((key) => {
+            this.processDataKey(key, typeof this.data[key] === 'string' ? this.data[key].toUpperCase() : this.data[key]);
+          });
           break;
       }
 
