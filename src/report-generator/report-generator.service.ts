@@ -81,6 +81,8 @@ export class ReportGeneratorService {
   private processDataKey(key: string, value: any): void {
     if (typeof value === 'object' && value !== null)
       this.processNestedObject(key, value);
+    else if (typeof value === 'number')
+      this.replaceHtmlTags(key, this.formatNumberSpanish(value));  
     else this.replaceHtmlTags(key, value);
   }
 
