@@ -41,15 +41,27 @@
 
         /* Header styles */
         .header {
-            height: 49px;
-            /* 12,96mm */
-            margin-bottom: 30.23px;
-            /*8mm*/
+            height: 80px;
+            /* 21,16mm */
+            margin-bottom: 10.23px;
+            /*2,70mm*/
         }
 
         .header-table {
             width: 100%;
             height: auto;
+        }
+
+        .report-name {
+            width: 100%;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .header-table tr:nth-child(2) td:nth-child(3),
+        .report-name {
+            text-align: right;
+            padding-right: 10%;
         }
 
         .report-title {
@@ -58,17 +70,10 @@
             width: 50%;
         }
 
-        .report-name {
-            width: 100%;
-            font-weight: bold;
-            text-align: right;
-            padding-right: 10%;
-        }
-
         /* Content styles */
         .content {
-            margin-bottom: 30.23px;
-            /* 8mm */
+            margin-bottom: 10.23px;
+            /* 2,70mm */
             height: 301px;
             /* 79,63mm */
         }
@@ -114,8 +119,8 @@
 
         /*** Footer styles ***/
         .footer {
-            height: 280px;
-            /* 74,08mm */
+            height: 300px;
+            /* 79,37mm */
         }
 
         .signatures-and-stamp {
@@ -124,8 +129,8 @@
             text-align: center;
         }
 
-        .signatures hr {
-            width: 65%;
+        .signature-line {
+            margin: 5px 0px;
         }
 
         .stamp {
@@ -141,15 +146,21 @@
         <div class="header">
             <table class="header-table">
                 <tr>
-                    <td class="report-name">
+                    <td colspan="3" class="report-name">
                         FORMULARIO BM-4
                     </td>
                 </tr>
                 <tr>
-                    <td class="report-title">
+                    <td width="20%">
+                        <img src="http://localhost:3000/images/escudo.png" alt="escudo" width="60px" height="60px" />
+                    </td>
+                    <td class="report-title" width="60%">
                         RESUMEN DE LA CUENTA DE BIENES MUEBLES
                         <br>
                         EN CADA UNIDAD DE TRABJO
+                    </td>
+                    <td width="20%">
+                        <img src="http://localhost:3000/images/logo.png" alt="logo" width="80px" height="60px" />
                     </td>
                 </tr>
             </table>
@@ -172,21 +183,21 @@
             <table class="data-table">
                 <tr>
                     <td>
-                        Existencia Anterior.............................................................................................................................................................................
+                        Existencia Anterior.....................................................................................................................................................................................................................
                     </td>
                     <td><data-previousAmount /></td>
                     <td></td>
                 </tr>
                 <tr>
                     <td>
-                        Incorporaciones en el Mes de la cuenta..............................................................................................................................................
+                        Incorporaciones en el Mes de la cuenta......................................................................................................................................................................................
                     </td>
                     <td><data-incAmount /></td>
                     <td></td>
                 </tr>
                 <tr>
                     <td>
-                        Desincorporaciones en el mes de la cuenta por todos los Conceptos, con.........................................................................................
+                        Desincorporaciones en el mes de la cuenta por todos los Conceptos, con.................................................................................................................................
                         <br>
                         excepcion del 60, "Faltantes de Bienes Por Investigar"
                     </td>
@@ -195,7 +206,7 @@
                 </tr>
                 <tr>
                     <td>
-                        Desincorporaciones en el mes de la cuenta por el Concepto 60 "Faltantes de...................................................................................
+                        Desincorporaciones en el mes de la cuenta por el Concepto 60 "Faltantes de...........................................................................................................................
                         <br>
                         Bienes Por Investigar"
                     </td>
@@ -204,7 +215,7 @@
                 </tr>
                 <tr>
                     <td>
-                        Existencia Final..................................................................................................................................................................................
+                        Existencia Final...........................................................................................................................................................................................................................
                     </td>
                     <td></td>
                     <td><data-finalAmount /></td>
@@ -217,11 +228,11 @@
                     <br>
                     <p>Firma del Jefe Responsable de la Unidad de Trabajo</p>
                     <br><br><br><br><br><br><br><br>
-                    <hr>
+                    <p class="signature-line">________________________________________</p>
                     <p><data-director /></p>
                     <p>JEFE(A) DE LA UNIDAD DE TRABAJO</p>
                     <br><br><br><br><br><br><br><br>
-                    <hr>
+                    <p class="signature-line">________________________________________</p>
                     <p><data-responsible /></p>
                     <p>ENCARGADO(A) DE BIENES</p>
                 </div>
