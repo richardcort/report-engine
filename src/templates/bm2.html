@@ -70,6 +70,10 @@
             font-weight: bold;
         }
 
+        .header-table tr:nth-child(2) td:nth-child(2) {
+            text-align: right;
+        }
+
         .information {
             border-collapse: collapse;
             width: 100%;
@@ -146,7 +150,7 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                <td colspan="2">
                     <p><strong>ESTADO:</strong> <data-state /></p>
                     <p><strong>DISTRITO:</strong> <data-district /></p>
                     <p><strong>MUNICIPIO:</strong> <data-municipality /></p>
@@ -155,6 +159,9 @@
                     <p><strong>SERVICIO:</strong> <data-service /></p>
                     <p><strong>UNIDAD DE TRABAJO O DEPENDENCIA:</strong> <data-administrativeUnit /></p>
                     <p><strong>PERIODO DE LA CUENTA (MES Y AÑO):</strong> <data-periodDate /></p>
+                </td>
+                <td>
+                    <img src="http://localhost:3000/images/logo_2.png" alt="logo" width="146.5px" height="57.5px" />
                 </td>
             </tr>
         </table>
